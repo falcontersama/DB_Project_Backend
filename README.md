@@ -1,2 +1,2 @@
 # DB_Project_Backend
-Project in Database Management Class (Frontend)
+Project in Database Management Class (Backend)
