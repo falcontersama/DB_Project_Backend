@@ -121,12 +121,12 @@ app.get("/studentCourse", function(req, res) {
   }
   db.query(
     `SELECT 
-    cs.CourseID,
-      cs.CName,
-      cs.CDesc,
-      cs.Grade,
-      cs.Type,
-      cs.Credits,
+    cs.CourseID AS subjectID,
+      cs.CName AS subjectName,
+      cs.CDesc AS sunjectDesc,
+      cs.Grade AS grade,
+      cs.Type AS type,
+      cs.Credits AS credits,
       group_concat(CONCAT('{"sec":"',cs.Sec,'","teacher":',cs.teacher,',"time":',cs.time,'}')) AS detail
   FROM (SELECT 
       cl.CourseID,
