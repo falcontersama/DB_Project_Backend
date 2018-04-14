@@ -81,7 +81,7 @@ response
         {
             "subjectID": "1234567",
             "subjectName": "test",
-            "sunjectDesc": "test1234",
+            "subjectDesc": "test1234",
             "grade": 4,
             "type": "reg",
             "credits": 3,

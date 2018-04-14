@@ -123,7 +123,7 @@ app.get("/studentCourse", function(req, res) {
     `SELECT 
     cs.CourseID AS subjectID,
       cs.CName AS subjectName,
-      cs.CDesc AS sunjectDesc,
+      cs.CDesc AS subjectDesc,
       cs.Grade AS grade,
       cs.Type AS type,
       cs.Credits AS credits,
