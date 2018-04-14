@@ -127,6 +127,8 @@ app.get("/studentCourse", function(req, res) {
       cs.CName AS subjectName,
       cs.CDesc AS subjectDesc,
       cs.Grade AS grade,
+      cs.Sem AS semester,
+      cs.Year AS year,
       cs.Type AS type,
       cs.Credits AS credits,
       group_concat(CONCAT('{"sec":"',cs.Sec,'","teacher":',cs.teacher,',"time":',cs.time,'}')) AS detail
