@@ -14,7 +14,7 @@ const connection = mysql.createConnection({
 
 ## Request & Response Examples
 
-### GET `/listCourses?courseID=[id]`
+### GET `/listCourses?courseID=[id]&courseName=[name]&isGened=[T/F]`
 response
 ```
 {
@@ -73,33 +73,121 @@ response
 }
 ```
 
+### GET `/allStudents?teacherID=[id]`
+response
+```
+{
+    "data": [
+        {
+            "studentID": "5208389731",
+            "studentName": "Ms. Cacheknock Pyramid"
+        },
+        {
+            "studentID": "5507967031",
+            "studentName": "Ms. Valve Software"
+        },
+        {
+            "studentID": "5508955931",
+            "studentName": "Mr. Video Chlorophyll"
+        }
+    ]
+}
+```
+
 ### GET `/studentCourse?studentID=[id]`
 response
 ```
 {
     "data": [
         {
-            "subjectID": "1234567",
-            "subjectName": "test",
-            "subjectDesc": "test1234",
-            "grade": 4,
-            "type": "reg",
-            "credits": 3,
-            "detail": {
-                "sec": "1",
-                "teacher": [
-                    "T. teacher teacherL"
-                ],
-                "time": [
-                    {
-                        "day": "TUE",
-                        "time": "08:00:00-11:00:00",
-                        "roomID": "1",
-                        "buildingID": "1"
-                    }
-                ]
-            }
+            "courseID": "0123101",
+            "courseName": "PARAGRAP WRITING",
+            "sec": 1,
+            "buildingID": null,
+            "roomID": null,
+            "day": null,
+            "startTime": null,
+            "duration": null
         }
     ]
+}
+```
+
+### POST `/register`
+request
+```
+{
+	"courseID":"0123101",
+	"sec":1,
+	"studentID":"5211067333"
+}
+```
+response
+```
+{
+    "success": {
+        ...
+    }
+}
+```
+or
+```
+{
+    "error": {
+        ...
+    }
+}
+```
+
+### GET `/teacherCourse?teacherID=[id]`
+response
+```
+{
+    "data": [
+        {
+            "courseID": "0123101",
+            "sec": 1,
+        }
+    ]
+}
+```
+
+### GET `/courseAllStudent?courseID=[id]&sec=[sec]`
+response
+```
+{
+    "data": [
+        {
+            "studentID": "5211067333",
+            "grade": 3.5,
+        }
+    ]
+}
+```
+
+### PUT `/grade`
+request
+```
+{
+	"courseID":"0123101",
+	"sec":1,
+	"studentID":"5211067333",
+    "grade":3.5
+}
+```
+response
+```
+{
+    "success": {
+        ...
+    }
+}
+```
+or
+```
+{
+    "error": {
+        ...
+    }
 }
 ```
