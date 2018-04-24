@@ -73,6 +73,41 @@ response
 }
 ```
 
+### GET `/studentCourse?studentID=[id]`
+response
+```
+{
+    "data": [
+        {
+            "subjectID": "0123101",
+            "subjectName": "PARAGRAP WRITING",
+            "subjectDesc": "PARAGRAPH WRITING",
+            "type": "Gened-hu",
+            "credits": 3,
+            "sec": 1,
+            "time": [
+                {
+                    "day": "MON",
+                    "time": "08:00:00-11:00:00",
+                    "roomID": "101",
+                    "buildingID": "04000"
+                },
+                {
+                    "day": "TUE",
+                    "time": "08:00:00-11:00:00",
+                    "roomID": "101",
+                    "buildingID": "04000"
+                }
+            ],
+            "teacher": [
+                "Assist. Prof. Dr. Jessupha Inchareon",
+                "Prof. Dr. Kanthee Kantawong"
+            ]
+        }
+    ]
+}
+```
+
 ### GET `/allStudents?teacherID=[id]`
 response
 ```
@@ -94,7 +129,7 @@ response
 }
 ```
 
-### GET `/studentCourse?studentID=[id]`
+### GET `/studentSchedule?studentID=[id]`
 response
 ```
 {
@@ -117,9 +152,9 @@ response
 request
 ```
 {
-	"courseID":"0123101",
-	"sec":1,
-	"studentID":"5211067333"
+    "courseID":"0123101",
+    "sec":1,
+    "studentID":"5211067333"
 }
 ```
 response
@@ -169,9 +204,9 @@ response
 request
 ```
 {
-	"courseID":"0123101",
-	"sec":1,
-	"studentID":"5211067333",
+    "courseID":"0123101",
+    "sec":1,
+    "studentID":"5211067333",
     "grade":3.5
 }
 ```

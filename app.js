@@ -78,7 +78,7 @@ WHERE
         AND co.CName LIKE ?
         AND co.Type LIKE ?`,
     [semester.sem, semester.year, courseID + "%", courseName + "%", genquery],
-    function(error, results, fields) {
+    function(error, results) {
       if (error) res.json(400, { error: error });
       else {
         res.json({ data: results });
@@ -93,64 +93,132 @@ app.get("/courseDetail", function(req, res) {
     res.json(400, { error: "input error" });
     return;
   }
+  const semester = getCurrentSemester();
   db.query(
     `SELECT 
-    cs.CourseID AS subjectID,
-      cs.CName AS subjectName,
-      cs.CDesc AS subjectDesc,
-      cs.Type AS type,
-      cs.Credits AS credits,
-      CONCAT('[',group_concat(CONCAT('{"sec":"',cs.Sec,'","teacher":',cs.teacher,',"time":',cs.time,'}')),']') AS detail
-  FROM (SELECT 
-      cl.CourseID,
-      cl.Sec,
-      co.CName,
-      co.CDesc,
-      co.Type,
-      co.Credits,
-      CONCAT('[',
-              GROUP_CONCAT(CONCAT('"',tr.NameTitle,
-                          ' ',
-                          tr.FName,
-                          ' ',
-                          tr.LName,'"')),
-              ']') AS teacher,
-      CONCAT('[',
-              GROUP_CONCAT(CONCAT(
-              '{"day":"',wur.Day,
-              '","time":"',CONCAT(wur.Time,'-',ADDTIME(wur.Time, wur.Duration)),
-              '","roomID":"',wur.RoomID,
-              '","buildingID":"',wur.BuildingID,'"}')),
-              ']') AS time
-  FROM
-      class AS cl,
-      course AS co,
-      weeklyuseroom AS wur,
-      teach AS t,
-      teacher AS tr
-  WHERE
-      cl.courseID = ?
-          AND cl.courseID = co.courseID
-          AND cl.courseID = wur.courseID
-          AND cl.Sec = wur.Sec
-          AND cl.Sem = wur.Sem
-          AND cl.Year = wur.Year
-          AND cl.courseID = t.courseID
-          AND cl.Sec = t.Sec
-          AND cl.Sem = t.Sem
-          AND cl.Year = t.Year
-          AND t.TeacherID = tr.TeacherID
-  GROUP BY cl.courseID , cl.Sec , cl.Sem , cl.Year) cs
-  GROUP BY cs.courseID`,
-    [courseID],
-    function(error, results, fields) {
+    course.CourseID AS subjectID,
+    course.CName AS subjectName,
+    course.CDesc AS subjectDesc,
+    course.Type AS type,
+    course.Credits AS credits,
+    CONCAT('[',GROUP_CONCAT(CONCAT(
+      '{"sec":"',Sec,
+      '","time":',
+          (SELECT 
+              CONCAT('[',IFNULL(GROUP_CONCAT(CONCAT(
+                '{"day":"',Day,
+                '","time":"',CONCAT(Time, '-', ADDTIME(Time, Duration)),
+                '","roomID":"',RoomID,
+                '","buildingID":"', BuildingID,
+                '"}')),
+               ''),']')
+          FROM
+              university.weeklyuseroom
+          WHERE
+              CourseID = class.CourseID
+                AND Sec = class.Sec
+                AND Sem = class.Sem
+                AND Year = class.Year),
+      ',"teacher":',
+          (SELECT 
+              CONCAT('[',IFNULL(GROUP_CONCAT(
+                (SELECT 
+                  CONCAT('"',NameTitle,' ',FName,' ',LName,'"')
+                FROM
+                  university.teacher
+                WHERE
+                  TeacherID = t.TeacherID)),
+              ''),']}')
+          FROM
+              university.teach AS t
+          WHERE
+              CourseID = class.CourseID
+                AND Sec = class.Sec
+                AND Sem = class.Sem
+                AND Year = class.Year))),
+    ']') AS detail
+FROM
+   university.class AS class
+       JOIN
+   university.course AS course ON class.CourseID = course.CourseID
+WHERE
+   class.CourseID = ? AND class.Sem = ?
+      AND class.Year = ?`,
+    [courseID, semester.sem, semester.year],
+    function(error, results) {
       if (error) {
         res.json(400, { error: error });
         return;
       } else {
-        //TODO reformat
         results = results.map(result => {
           result["detail"] = JSON.parse(result["detail"]);
+          return result;
+        });
+        res.json({ data: results });
+      }
+    }
+  );
+});
+
+app.get("/studentCourse", function(req, res) {
+  const studentID = req.query["studentID"];
+  if (!studentID || studentID.length != 10) {
+    res.json(400, { error: "input error" });
+    return;
+  }
+  db.query(
+    `SELECT 
+    course.CourseID AS subjectID,
+    course.CName AS subjectName,
+    course.CDesc AS subjectDesc,
+    course.Type AS type,
+    course.Credits AS credits,
+	study.Sec As sec,
+    (SELECT 
+		CONCAT('[',IFNULL(GROUP_CONCAT(CONCAT(
+			'{"day":"',Day,
+            '","time":"',CONCAT(Time, '-', ADDTIME(Time, Duration)),
+            '","roomID":"',RoomID,
+			'","buildingID":"',BuildingID,
+		'"}')),''),']')
+	FROM
+        university.weeklyuseroom
+	WHERE
+        CourseID = study.CourseID
+           AND Sec = study.Sec
+           AND Sem = study.Sem
+           AND Year = study.Year) AS time,
+	(SELECT 
+		CONCAT('[',IFNULL(GROUP_CONCAT(
+			(SELECT 
+				CONCAT('"',NameTitle, ' ', FName,' ', LName,'"')
+            FROM
+                university.teacher
+            WHERE
+                TeacherID = t.TeacherID)),
+        ''),']')
+    FROM
+        university.teach AS t
+    WHERE
+		CourseID = study.CourseID
+			AND Sec = study.Sec
+            AND Sem = study.Sem
+            AND Year = study.Year) AS teacher
+FROM
+    university.study AS study
+        JOIN
+    university.course AS course ON study.CourseID = course.CourseID
+WHERE
+    study.StudentID = ?`,
+    [studentID],
+    function(error, results) {
+      if (error) {
+        res.json(400, { error: error });
+        return;
+      } else {
+        results = results.map(result => {
+          result["time"] = JSON.parse(result["time"]);
+          result["teacher"] = JSON.parse(result["teacher"]);
           return result;
         });
         res.json({ data: results });
@@ -174,7 +242,7 @@ app.get("/allStudents", function(req, res) {
     WHERE
         AdvicerID = ?`,
     [teacherID],
-    function(error, results, fields) {
+    function(error, results) {
       if (error) res.json(400, { error: error });
       else {
         res.json({ data: results });
@@ -183,7 +251,7 @@ app.get("/allStudents", function(req, res) {
   );
 });
 
-app.get("/studentCourse", function(req, res) {
+app.get("/studentSchedule", function(req, res) {
   const studentID = req.query["studentID"];
   if (!studentID || studentID.length != 10) {
     res.json(400, { error: "input error" });
@@ -218,11 +286,12 @@ FROM
         StudentID = ? AND
         Sem = ? AND
         Year = ?) AS class
-        LEFT JOIN
-    university.weeklyuseroom AS wur ON class.CourseID = wur.CourseID) AS class2
-    join university.course AS c on class2.CourseID = c.CourseID`,
+    LEFT JOIN
+        university.weeklyuseroom AS wur ON class.CourseID = wur.CourseID) AS class2
+JOIN 
+    university.course AS c ON class2.CourseID = c.CourseID`,
     [studentID, semester.sem, semester.year],
-    function(error, results, fields) {
+    function(error, results) {
       if (error) res.json(400, { error: error });
       else {
         res.json({ data: results });
@@ -250,7 +319,7 @@ app.post("/register", function(req, res) {
         ]
       ]
     ],
-    function(error, results, fields) {
+    function(error, results) {
       if (error) res.json(400, { error: error });
       else {
         res.json({ success: results });
@@ -277,7 +346,7 @@ app.get("/teacherCourse", function(req, res) {
         AND Sem = ?
         AND Year = ?`,
     [teacherID, semester.sem, semester.year],
-    function(error, results, fields) {
+    function(error, results) {
       if (error) res.json(400, { error: error });
       else {
         res.json({ data: results });
@@ -306,7 +375,7 @@ app.get("/courseAllStudent", function(req, res) {
         AND Sem = ?
         AND Year = ?`,
     [courseID, sec, semester.sem, semester.year],
-    function(error, results, fields) {
+    function(error, results) {
       if (error) res.json(400, { error: error });
       else {
         res.json({ data: results });
@@ -341,7 +410,7 @@ app.put("/grade", function(req, res) {
       semester.year,
       req.body["studentID"]
     ],
-    function(error, results, fields) {
+    function(error, results) {
       if (error) res.json(400, { error: error });
       else {
         res.json({ success: results });
