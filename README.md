@@ -1,8 +1,11 @@
 # DB_Project_Backend
+
 Project in Database Management Class (Backend)
 
 ## config db.js
+
 Please edit `db-example.js` follow this and save it as `db.js`.
+
 ```javascript
 const connection = mysql.createConnection({
   host: /*your host url*/,
@@ -15,7 +18,9 @@ const connection = mysql.createConnection({
 ## Request & Response Examples
 
 ### GET `/listCourses?courseID=[id]&courseName=[name]&isGened=[T/F]`
+
 response
+
 ```
 {
     "data": [
@@ -28,7 +33,9 @@ response
 ```
 
 ### GET `/courseDetail?courseID=[id]`
+
 response
+
 ```
 {
     "data": [
@@ -38,6 +45,12 @@ response
             "subjectDesc": "test1234",
             "type": "reg",
             "credits": 3,
+            "requisite": [
+                {
+                    "courseID":"2102252",
+                    "type":"PreReq"
+                }
+            ],
             "detail": [
                 {
                     "sec": "1",
@@ -74,7 +87,9 @@ response
 ```
 
 ### GET `/studentCourse?studentID=[id]`
+
 response
+
 ```
 {
     "data": [
@@ -109,7 +124,9 @@ response
 ```
 
 ### GET `/allStudents?teacherID=[id]`
+
 response
+
 ```
 {
     "data": [
@@ -130,7 +147,9 @@ response
 ```
 
 ### GET `/studentSchedule?studentID=[id]`
+
 response
+
 ```
 {
     "data": [
@@ -149,7 +168,9 @@ response
 ```
 
 ### POST `/register`
+
 request
+
 ```
 {
     "courseID":"0123101",
@@ -157,7 +178,9 @@ request
     "studentID":"5211067333"
 }
 ```
+
 response
+
 ```
 {
     "success": {
@@ -165,7 +188,9 @@ response
     }
 }
 ```
+
 or
+
 ```
 {
     "error": {
@@ -175,7 +200,9 @@ or
 ```
 
 ### GET `/teacherCourse?teacherID=[id]`
+
 response
+
 ```
 {
     "data": [
@@ -188,7 +215,9 @@ response
 ```
 
 ### GET `/courseAllStudent?courseID=[id]&sec=[sec]`
+
 response
+
 ```
 {
     "data": [
@@ -201,7 +230,9 @@ response
 ```
 
 ### PUT `/grade`
+
 request
+
 ```
 {
     "courseID":"0123101",
@@ -210,7 +241,9 @@ request
     "grade":3.5
 }
 ```
+
 response
+
 ```
 {
     "success": {
@@ -218,7 +251,9 @@ response
     }
 }
 ```
+
 or
+
 ```
 {
     "error": {

@@ -101,6 +101,16 @@ app.get("/courseDetail", function(req, res) {
     course.CDesc AS subjectDesc,
     course.Type AS type,
     course.Credits AS credits,
+    (SELECT 
+      CONCAT('[',IFNULL(GROUP_CONCAT((CONCAT(
+      '{"courseID":"',rq.RqCID,
+      '","type":"',rq.Type,
+           '"}'))),''),
+      ']')
+    FROM
+      university.requisite AS rq
+    WHERE
+      rq.CourseID = class.CourseID) AS requisite,
     CONCAT('[',GROUP_CONCAT(CONCAT(
       '{"sec":"',Sec,
       '","time":',
@@ -151,6 +161,7 @@ WHERE
         return;
       } else {
         results = results.map(result => {
+          result["requisite"] = JSON.parse(result["requisite"]);
           result["detail"] = JSON.parse(result["detail"]);
           return result;
         });
