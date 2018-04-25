@@ -26,7 +26,8 @@ response
     "data": [
         {
             "subjectID": "1234567",
-            "subjectName": "test"
+            "subjectName": "test",
+            "requisite": []
         }
     ]
 }

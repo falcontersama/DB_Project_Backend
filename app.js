@@ -67,20 +67,33 @@ app.get("/listCourses", function(req, res) {
   db.query(
     `SELECT DISTINCT
     co.courseID AS subjectID, 
-    co.CName AS subjectName
+    co.CName AS subjectName,
+    (SELECT 
+      CONCAT('[',IFNULL(GROUP_CONCAT((CONCAT(
+      '{"courseID":"',rq.RqCID,
+      '","type":"',rq.Type,
+           '"}'))),''),
+      ']')
+    FROM
+      university.requisite AS rq
+    WHERE
+      rq.CourseID = cl.CourseID) AS requisite
 FROM
-    class AS cl,
-    course AS co
+    class AS cl
+    JOIN course AS co ON cl.CourseID = co.CourseID
 WHERE
     cl.Sem = ? AND cl.Year = ? 
         AND cl.courseID LIKE ?
-        AND cl.courseID = co.courseID
         AND co.CName LIKE ?
         AND co.Type LIKE ?`,
     [semester.sem, semester.year, courseID + "%", courseName + "%", genquery],
     function(error, results) {
       if (error) res.json(400, { error: error });
       else {
+        results = results.map(result => {
+          result["requisite"] = JSON.parse(result["requisite"]);
+          return result;
+        });
         res.json({ data: results });
       }
     }
