@@ -199,8 +199,8 @@ app.get("/studentCourse", function(req, res) {
     course.CDesc AS subjectDesc,
     course.Type AS type,
     course.Credits AS credits,
-    studey.Sem AS semester,
-    studey.Year AS year,
+    study.Sem AS semester,
+    study.Year AS year,
 	  study.Sec AS sec,
     (SELECT 
 		CONCAT('[',IFNULL(GROUP_CONCAT(CONCAT(
