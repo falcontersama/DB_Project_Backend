@@ -126,6 +126,8 @@ app.get("/courseDetail", function(req, res) {
       rq.CourseID = class.CourseID) AS requisite,
     CONCAT('[',GROUP_CONCAT(CONCAT(
       '{"sec":"',Sec,
+      '","maxSeat":',MaxSeat,
+      '","seat":',AvailableSeat,
       '","time":',
           (SELECT 
               CONCAT('[',IFNULL(GROUP_CONCAT(CONCAT(
@@ -197,7 +199,9 @@ app.get("/studentCourse", function(req, res) {
     course.CDesc AS subjectDesc,
     course.Type AS type,
     course.Credits AS credits,
-	study.Sec As sec,
+    studey.Sem AS semester,
+    studey.Year AS year,
+	  study.Sec AS sec,
     (SELECT 
 		CONCAT('[',IFNULL(GROUP_CONCAT(CONCAT(
 			'{"day":"',Day,
