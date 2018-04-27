@@ -415,6 +415,52 @@ app.get("/courseAllStudent", function(req, res) {
   );
 });
 
+app.get("/semesterSchedule", function(req, res) {
+  const semester = getCurrentSemester();
+  db.query(
+    `SELECT 
+        Semester AS semester,
+        Year AS year,
+        PayDate AS paydate,
+        RegDate AS regdate, 
+        DropDate AS dropdate, 
+        WithdrawDate AS withdrawdate
+    FROM
+        semester
+    WHERE
+        Semester = ? AND Year = ?`,
+    [semester.sem, semester.year],
+    function(error, results) {
+      if (error) res.json(400, { error: error });
+      else {
+        res.json({ data: results });
+      }
+    }
+  );
+});
+
+app.delete("/unregister", function(req, res) {
+  if (!req.body["courseID"] || !req.body["sec"] || !req.body["studentID"]) {
+    res.json(400, { error: "input error" });
+    return;
+  }
+  const semester = getCurrentSemester();
+  db.query(
+    `DELETE FROM study 
+    WHERE CourseID = ?
+      AND StudentID = ?
+      AND Sem = ?
+      AND Year = ?`,
+    [req.body["courseID"], req.body["studentID"], semester.sem, semester.year],
+    function(error, results) {
+      if (error) res.json(400, { error: error });
+      else {
+        res.json({ success: results });
+      }
+    }
+  );
+});
+
 app.put("/grade", function(req, res) {
   if (
     !req.body["courseID"] ||

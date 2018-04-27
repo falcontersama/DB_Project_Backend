@@ -17,6 +17,25 @@ const connection = mysql.createConnection({
 
 ## Request & Response Examples
 
+### GET `/semesterSchedule`
+
+response
+
+```
+{
+    "data": [
+        {
+            "semester": 2,
+            "year": 2017,
+            "paydate": "2017-01-01T16:59:59.000Z",
+            "regdate": "2017-12-29T16:59:59.000Z",
+            "dropdate": "2018-02-16T16:59:59.000Z",
+            "withdrawdate": "2018-03-30T16:59:59.000Z"
+        }
+    ]
+}
+```
+
 ### GET `/listCourses?courseID=[id]&courseName=[name]&isGened=[T/F]`
 
 response
@@ -180,6 +199,37 @@ request
 {
     "courseID":"0123101",
     "sec":1,
+    "studentID":"5211067333"
+}
+```
+
+response
+
+```
+{
+    "success": {
+        ...
+    }
+}
+```
+
+or
+
+```
+{
+    "error": {
+        ...
+    }
+}
+```
+
+### DELETE `/unregister`
+
+request
+
+```
+{
+    "courseID":"0123101",
     "studentID":"5211067333"
 }
 ```
