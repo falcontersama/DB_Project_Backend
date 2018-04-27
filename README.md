@@ -55,6 +55,8 @@ response
             "detail": [
                 {
                     "sec": "1",
+                    "seat": 29,
+                    "maxSeat": 30,
                     "teacher": [
                         "T. teacher teacherL"
                     ],
@@ -101,6 +103,8 @@ response
             "type": "Gened-hu",
             "credits": 3,
             "sec": 1,
+            "semester": 2,
+            "year": 2017,
             "time": [
                 {
                     "day": "MON",

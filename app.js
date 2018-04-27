@@ -50,6 +50,8 @@ function getCurrentSemester() {
   };
 }
 
+//check null?????
+
 app.get("/listCourses", function(req, res) {
   const courseID = req.query["courseID"] || "";
   const courseName = req.query["courseName"] || "";
@@ -59,7 +61,7 @@ app.get("/listCourses", function(req, res) {
     return;
   }
   let genquery = "";
-  if (isGened) {
+  if (isGened === "T") {
     genquery = "Gened%";
   }
   const semester = getCurrentSemester();
@@ -125,10 +127,10 @@ app.get("/courseDetail", function(req, res) {
     WHERE
       rq.CourseID = class.CourseID) AS requisite,
     CONCAT('[',GROUP_CONCAT(CONCAT(
-      '{"sec":"',Sec,
-      '","maxSeat":',MaxSeat,
-      '","seat":',AvailableSeat,
-      '","time":',
+      '{"sec":',Sec,
+      ',"maxSeat":',MaxSeat,
+      ',"seat":',AvailableSeat,
+      ',"time":',
           (SELECT 
               CONCAT('[',IFNULL(GROUP_CONCAT(CONCAT(
                 '{"day":"',Day,
@@ -168,7 +170,8 @@ FROM
    university.course AS course ON class.CourseID = course.CourseID
 WHERE
    class.CourseID = ? AND class.Sem = ?
-      AND class.Year = ?`,
+      AND class.Year = ?
+GROUP BY class.CourseID`,
     [courseID, semester.sem, semester.year],
     function(error, results) {
       if (error) {
