@@ -50,7 +50,33 @@ function getCurrentSemester() {
   };
 }
 
-//check null?????
+app.post("/login", function(req, res) {
+  if (!req.body["ID"]) {
+    res.json(400, { error: "input error" });
+    return;
+  }
+  db.query(
+    `SELECT StudentID AS ID,Password
+  FROM student
+  WHERE StudentID = ?
+  UNION
+  SELECT TeacherID,Password
+  FROM teacher
+  WHERE TeacherID = ?`,
+    [req.body["ID"], req.body["ID"]],
+    function(err, results) {
+      if (results.length > 0) {
+        if (req.body["password"] === results[0]["Password"]) {
+          res.json(200, { staus: "success" });
+        } else {
+          res.json(200, { staus: "fail" });
+        }
+      } else {
+        res.json(200, { staus: "fail" });
+      }
+    }
+  );
+});
 
 app.get("/listCourses", function(req, res) {
   const courseID = req.query["courseID"] || "";

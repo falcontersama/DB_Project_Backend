@@ -17,6 +17,25 @@ const connection = mysql.createConnection({
 
 ## Request & Response Examples
 
+### POST `/login`
+
+request
+
+```
+{
+	"ID":"0000000101",
+	"password":"12345678"
+}
+```
+
+response
+
+```
+{
+    "staus": "success"
+}
+```
+
 ### GET `/semesterSchedule`
 
 response
