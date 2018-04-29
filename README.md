@@ -32,7 +32,7 @@ response
 
 ```
 {
-    "staus": "success"
+    "status": "success"
 }
 ```
 
