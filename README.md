@@ -335,3 +335,21 @@ or
     }
 }
 ```
+
+### GET `/paymentStatus?studentID=[id]`
+
+response
+
+```
+{
+    "data": [
+        {
+            "payStatus": "paid" or "wait",
+            "curName": "Vet_Bachelor",
+            "degree": "B",
+            "fullTimePrice": 21000,
+            "partTimePrice": 13000
+        }
+    ]
+}
+```
