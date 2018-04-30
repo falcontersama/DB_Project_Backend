@@ -230,7 +230,8 @@ app.get("/studentCourse", function(req, res) {
     course.Credits AS credits,
     study.Sem AS semester,
     study.Year AS year,
-	  study.Sec AS sec,
+    study.Sec AS sec,
+    study.Grade AS grade,
     (SELECT 
 		CONCAT('[',IFNULL(GROUP_CONCAT(CONCAT(
 			'{"day":"',Day,
@@ -522,7 +523,7 @@ app.put("/grade", function(req, res) {
   );
 });
 
-app.get('/paymentStatus', function (req,res) {
+app.get("/paymentStatus", function(req, res) {
   const studentID = req.query["studentID"];
   if (!studentID || studentID.length != 10) {
     res.json(400, { error: "input error" });
@@ -530,7 +531,7 @@ app.get('/paymentStatus', function (req,res) {
   }
   const semester = getCurrentSemester();
   db.query(
-`SELECT 
+    `SELECT 
   PayStatus AS payStatus,
   CurName AS curName,
   Degree AS Degree,
@@ -550,7 +551,8 @@ WHERE
       else {
         res.json({ data: results });
       }
-    });
+    }
+  );
 });
 
 app.listen(port, function() {

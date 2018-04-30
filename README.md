@@ -143,6 +143,7 @@ response
             "sec": 1,
             "semester": 2,
             "year": 2017,
+            "grade": 1
             "time": [
                 {
                     "day": "MON",
