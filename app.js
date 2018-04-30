@@ -467,7 +467,7 @@ app.get("/semesterSchedule", function(req, res) {
 });
 
 app.delete("/unregister", function(req, res) {
-  if (!req.body["courseID"] || !req.body["sec"] || !req.body["studentID"]) {
+  if (!req.body["courseID"] || !req.body["studentID"]) {
     res.json(400, { error: "input error" });
     return;
   }
