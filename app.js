@@ -67,12 +67,12 @@ app.post("/login", function(req, res) {
     function(err, results) {
       if (results && results.length > 0) {
         if (req.body["password"] === results[0]["Password"]) {
-          res.json(200, { staus: "success", data: results });
+          res.json(200, { status: "success", data: results });
         } else {
-          res.json(200, { staus: "fail", data: results });
+          res.json(200, { status: "fail", data: results });
         }
       } else {
-        res.json(200, { staus: "fail" });
+        res.json(200, { status: "fail" });
       }
     }
   );
