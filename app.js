@@ -56,20 +56,20 @@ app.post("/login", function(req, res) {
     return;
   }
   db.query(
-    `SELECT StudentID AS ID,Password
+    `SELECT StudentID AS ID, Password, 'student' AS type
   FROM student
   WHERE StudentID = ?
   UNION
-  SELECT TeacherID,Password
+  SELECT TeacherID, Password, 'teacher' AS type
   FROM teacher
   WHERE TeacherID = ?`,
     [req.body["ID"], req.body["ID"]],
     function(err, results) {
       if (results && results.length > 0) {
         if (req.body["password"] === results[0]["Password"]) {
-          res.json(200, { staus: "success" });
+          res.json(200, { staus: "success", data: results });
         } else {
-          res.json(200, { staus: "fail" });
+          res.json(200, { staus: "fail", data: results });
         }
       } else {
         res.json(200, { staus: "fail" });
@@ -467,6 +467,7 @@ app.get("/semesterSchedule", function(req, res) {
 });
 
 app.delete("/unregister", function(req, res) {
+  console.log(req.body);
   if (!req.body["courseID"] || !req.body["studentID"]) {
     res.json(400, { error: "input error" });
     return;

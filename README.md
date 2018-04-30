@@ -32,7 +32,14 @@ response
 
 ```
 {
-    "status": "success"
+    "status": "success",
+    "data": [
+        {
+            "ID": "0000000101",
+            "Password": "12345678",
+            "type": "teacher"
+        }
+    ]
 }
 ```
 
