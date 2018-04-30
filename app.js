@@ -65,7 +65,7 @@ app.post("/login", function(req, res) {
   WHERE TeacherID = ?`,
     [req.body["ID"], req.body["ID"]],
     function(err, results) {
-      if (results.length > 0) {
+      if (results && results.length > 0) {
         if (req.body["password"] === results[0]["Password"]) {
           res.json(200, { staus: "success" });
         } else {
@@ -520,37 +520,6 @@ app.put("/grade", function(req, res) {
       }
     }
   );
-});
-
-app.get('/paymentStatus', function (req,res) {
-  const studentID = req.query["studentID"];
-  if (!studentID || studentID.length != 10) {
-    res.json(400, { error: "input error" });
-    return;
-  }
-  const semester = getCurrentSemester();
-  db.query(
-`SELECT 
-  PayStatus AS payStatus,
-  CurName AS curName,
-  Degree AS Degree,
-  FTPrice AS fullTimePrice,
-  PTPrice AS partTimePrice
-FROM
-  (university.student AS st
-    JOIN university.curricullum AS cl ON st.CurricullmID = cl.CurID)
-      JOIN
-      university.register AS rg ON st.StudentID = rg.StudentID
-WHERE
-  rg.StudentID = ? AND rg.Sem = ?
-    AND rg.Year = ?`,
-    [studentID, semester.sem, semester.year],
-    function(error, results) {
-      if (error) res.json(400, { error: error });
-      else {
-        res.json({ data: results });
-      }
-    });
 });
 
 app.listen(port, function() {
