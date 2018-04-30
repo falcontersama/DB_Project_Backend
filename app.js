@@ -65,7 +65,7 @@ app.post("/login", function(req, res) {
   WHERE TeacherID = ?`,
     [req.body["ID"], req.body["ID"]],
     function(err, results) {
-      if (results.length > 0) {
+      if (results && results.length > 0) {
         if (req.body["password"] === results[0]["Password"]) {
           res.json(200, { staus: "success" });
         } else {
